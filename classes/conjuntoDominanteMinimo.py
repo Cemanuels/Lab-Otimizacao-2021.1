@@ -1,7 +1,8 @@
-import no
-import grafo
+from classes import no
+from classes import grafo
 import copy
 # import numpy as np
+
 
 class DDconjuntoDominanteMinimo:
 	def __init__(self):
@@ -39,7 +40,6 @@ class DDconjuntoDominanteMinimo:
 							maior = k
 				if maior == j:
 					inviavel = True
-		print(inviavel)
 		return inviavel
 
 

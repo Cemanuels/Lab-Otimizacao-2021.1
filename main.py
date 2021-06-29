@@ -1,4 +1,4 @@
-import conjuntoDominanteMinimo as CDM
+from classes import conjuntoDominanteMinimo as CDM
 
 cdm = CDM.DDconjuntoDominanteMinimo()
 t = cdm.encontrarNoOtimo()

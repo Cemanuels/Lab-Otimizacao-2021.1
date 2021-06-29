@@ -7,7 +7,6 @@ class Grafo:
 		self.pesos = self.lerpesos() #pesos dos vértices
 
 
-
 	def lergrafo(self):
 		try:
 			file = open("instancia1.txt", "rt")
