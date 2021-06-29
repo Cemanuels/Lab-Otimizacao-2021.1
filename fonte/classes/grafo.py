@@ -9,7 +9,7 @@ class Grafo:
 
 	def lergrafo(self):
 		try:
-			file = open("instancia1.txt", "rt")
+			file = open("./instancias/instancia1.txt", "rt")
 		
 		except:
 			print("Erro ao ler o arquivo.")
@@ -30,7 +30,7 @@ class Grafo:
 
 	def lerpesos(self):
 		try:
-			file = open("instancia1.txt", "rt")
+			file = open("./instancias/instancia1.txt", "rt")
 
 		except:
 			print("Erro ao ler o arquivo.")
