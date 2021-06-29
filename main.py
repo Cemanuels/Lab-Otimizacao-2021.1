@@ -1,6 +1,8 @@
 from classes import conjuntoDominanteMinimo as CDM
 
 cdm = CDM.DDconjuntoDominanteMinimo()
-t = cdm.encontrarNoOtimo()
-print(t.custo)
-print(t.solParcial)
+listaDeNos = cdm.encontrarNoOtimo()
+
+print("custo:", listaDeNos[0].custo)
+for t in listaDeNos:
+	print(t.solParcial)

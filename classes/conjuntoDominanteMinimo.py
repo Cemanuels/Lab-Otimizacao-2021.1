@@ -6,8 +6,8 @@ import copy
 
 class DDconjuntoDominanteMinimo:
 	def __init__(self):
-		anterior = []
-		proxima = []
+		self.anterior = []
+		self.proxima = []
 		t = no.No([], 0, [])
 
 
@@ -22,9 +22,9 @@ class DDconjuntoDominanteMinimo:
 	def verificarNoIgual(self, proxima):
 		for u in range(len(proxima) - 1):
 			if proxima[u].estado == proxima[- 1].estado:
-				if proxima[u].custo <= proxima[- 1].custo:
+				if proxima[u].custo < proxima[- 1].custo:
 					proxima.pop()
-				else:
+				if proxima[u].custo != proxima[- 1].custo:
 					proxima.pop(u)
 		return proxima	
 
@@ -47,8 +47,6 @@ class DDconjuntoDominanteMinimo:
 		gf = grafo.Grafo()
 		estado = [1 for x in gf.pesos]
 		solParcial = [1 for x in gf.pesos]
-		self.proxima = [no.No([], 0, [])]
-		self.proxima.pop()
 		self.anterior = [no.No(estado, 0, solParcial)]
 		for j in range(len(gf.pesos)):
 			for u in range(len(self.anterior)):
@@ -66,5 +64,5 @@ class DDconjuntoDominanteMinimo:
 			self.anterior = self.proxima.copy()
 			# print(len(self.anterior))
 			self.proxima.clear()
-		t = self.anterior[0]
-		return t
+		return self.anterior
+	
