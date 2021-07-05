@@ -6,10 +6,10 @@ class Grafo:
 		self.grafo = self.lergrafo() #Matriz do grafo 
 		self.pesos = self.lerpesos() #pesos dos vértices
 
-
+	#Lê o arquivo texto e retorna a matriz que representa o grafo do problema
 	def lergrafo(self):
 		try:
-			file = open("./instancias/instancia1.txt", "rt")
+			file = open("./instancias/instancia1.txt", "rt") #Alterar o nome do arquivo para alterar a instância
 		
 		except:
 			print("Erro ao ler o arquivo.")
@@ -17,8 +17,8 @@ class Grafo:
 
 		else:
 			x = int(file.readline())
-			grafo = np.zeros((x,x)) #Cria uma matriz de tamanho NxN
-			for i in range(int(file.readline())): #for percorendo o número de arestas e prenchendo a matriz
+			grafo = np.zeros((x,x)) 
+			for i in range(int(file.readline())):
 				x = file.readline()
 				x = x.split(" ")
 				x = [int(x) for x in x]
@@ -27,7 +27,7 @@ class Grafo:
 			file.close()
 			return grafo
 
-
+	#Lê o arquivo texto e retorna os pesos de cada vértice
 	def lerpesos(self):
 		try:
 			file = open("./instancias/instancia1.txt", "rt")
