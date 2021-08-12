@@ -1,10 +1,17 @@
 from classes import conjuntoDominanteMinimo as CDM
 
 cdm = CDM.DDconjuntoDominanteMinimo()
-listaDeNos = cdm.encontrarNoOtimo()
 
+# listaDeNos = cdm.encontrarNoOtimo()
+# print("Custo:", listaDeNos[0].custo, "\n")
+# print("Conjuntos solucao otimo:")
+# for t in listaDeNos:
+# 	print(t.solParcial)
+
+
+listaDeNos = cdm.encontrarNoRestrito(10)
 print("Custo:", listaDeNos[0].custo, "\n")
-print("Conjuntos solucao otimo:")
+print("Conjuntos solucao restrito:")
 for t in listaDeNos:
 	print(t.solParcial)
 
