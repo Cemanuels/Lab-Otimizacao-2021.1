@@ -103,19 +103,19 @@ class DDconjuntoDominanteMinimo:
 		return self.anterior
 
 
-#Junta os nós para que a camada tenha no maximo largura W
-def unirNos(self, w, proxima):
-	proxima = sorted(proxima, key = attrgetter('custo'), reverse = True)#Ordena a camada de acordo com o custo decrescente
-	aux = proxima[-w].estado
-	proxima[-w].estado = [0 for x in aux]
-	while w < len(proxima):#Percorre a camada até que ela tenha tamanho W 
-		j = 0
-		while j < len(proxima[0].estado):#Percorre o estado
-			if aux[j] == proxima[0].estado[j] == 1:#Testa se a variavel j é 1 nos dois estados
-				proxima[-w].estado[j] = 1 #Atualiza o a variavel j do novo estado para 1 
-			j += 1
-		proxima.pop(0)
-	return proxima
+	#Junta os nós para que a camada tenha no maximo largura W
+	def unirNos(self, w, proxima):
+		proxima = sorted(proxima, key = attrgetter('custo'), reverse = True)#Ordena a camada de acordo com o custo decrescente
+		aux = proxima[-w].estado
+		proxima[-w].estado = [0 for x in aux]
+		while w < len(proxima):#Percorre a camada até que ela tenha tamanho W 
+			j = 0
+			while j < len(proxima[0].estado):#Percorre o estado
+				if aux[j] == proxima[0].estado[j] == 1:#Testa se a variavel j é 1 nos dois estados
+					proxima[-w].estado[j] = 1 #Atualiza o a variavel j do novo estado para 1 
+				j += 1
+			proxima.pop(0)
+		return proxima
 
 
 	#Retorna a solução do diagrama relaxado para o problema do conjunto dominante minimo 

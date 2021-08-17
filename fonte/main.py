@@ -9,7 +9,7 @@ cdm = CDM.DDconjuntoDominanteMinimo()
 # 	print(t.solParcial)
 
 
-listaDeNos = cdm.encontrarNoRelaxado(15)
+listaDeNos = cdm.encontrarNoRelaxado(10)
 print("Custo:", listaDeNos[0].custo, "\n")
 print("Conjuntos solucao restrito:")
 for t in listaDeNos:
