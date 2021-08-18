@@ -1,5 +1,4 @@
 import numpy as np
-	
 
 class Grafo:
 	def __init__(self):
@@ -9,7 +8,7 @@ class Grafo:
 	#Lê o arquivo texto e retorna a matriz que representa o grafo do problema
 	def lergrafo(self):
 		try:
-			file = open("./instancias/instancia1.txt", "rt") #Alterar o nome do arquivo para alterar a instância
+			file = open("./instancias/conjdom.txt", "rt") #Alterar o nome do arquivo para alterar a instância
 		
 		except:
 			print("Erro ao ler o arquivo.")
@@ -30,7 +29,7 @@ class Grafo:
 	#Lê o arquivo texto e retorna os pesos de cada vértice
 	def lerpesos(self):
 		try:
-			file = open("./instancias/instancia1.txt", "rt")
+			file = open("./instancias/conjdom.txt", "rt")
 
 		except:
 			print("Erro ao ler o arquivo.")
