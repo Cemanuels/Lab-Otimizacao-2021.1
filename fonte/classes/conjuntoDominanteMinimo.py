@@ -8,7 +8,6 @@ class DDconjuntoDominanteMinimo:
 	def __init__(self):
 		self.anterior = [] #Camada anterior do DD
 		self.proxima = [] #Proxima camada do DD
-
 	
 	#Atualiza o estado se um elementode indice J receber 1
 	def atualizarEstado(self, j, estado, grafo):
@@ -64,8 +63,8 @@ class DDconjuntoDominanteMinimo:
 
 
 	#Retorna a solução do diagrama exato para o problema do conjunto dominante minimo 
-	def encontrarNoOtimo(self):
-		gf = grafo.Grafo()
+	def encontrarNoOtimo(self, instancia):
+		gf = grafo.Grafo(instancia)
 		estado = [1 for x in gf.pesos]
 		solParcial = [1 for x in gf.pesos]
 		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
@@ -82,8 +81,8 @@ class DDconjuntoDominanteMinimo:
 
 
 	#Retorna a solução do diagrama restrito(aléatorio) para o problema do conjunto dominante minimo 
-	def encontrarNoRestrito(self, w):
-		gf = grafo.Grafo()
+	def encontrarNoRestrito(self, w, instancia):
+		gf = grafo.Grafo(instancia)
 		estado = [1 for x in gf.pesos]
 		solParcial = [1 for x in gf.pesos]
 		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
@@ -124,8 +123,8 @@ class DDconjuntoDominanteMinimo:
 		return proxima
 
 	#Retorna a solução do diagrama relaxado para o problema do conjunto dominante minimo 
-	def encontrarNoRelaxado(self, w):
-		gf = grafo.Grafo()
+	def encontrarNoRelaxado(self, w, instancia):
+		gf = grafo.Grafo(instancia)
 		estado = [1 for x in gf.pesos]
 		solParcial = [1 for x in gf.pesos]
 		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
@@ -142,8 +141,8 @@ class DDconjuntoDominanteMinimo:
 			self.proxima = []#Limpa proxima antes de passar para próxima camada
 		return self.anterior
 
-	def encontrarNoRestritoMaxW(self, w):
-		gf = grafo.Grafo()
+	def encontrarNoRestritoMaxW(self, w, instancia):
+		gf = grafo.Grafo(instancia)
 		estado = [1 for x in gf.pesos]
 		solParcial = [1 for x in gf.pesos]
 		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
