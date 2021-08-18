@@ -1,5 +1,6 @@
 from classes import no
 from classes import grafo
+from operator import attrgetter
 import copy
 
 
@@ -22,8 +23,6 @@ class DDconjuntoDominanteMinimo:
 	def eliminarNoIgual(self, proxima):
 		u = 0
 		while u < (len(proxima) - 1):
-			print(u)
-			print(len(proxima))
 			if proxima[u].estado == proxima[- 1].estado:#Testa se o ultimo nó adicionado tem estado igual algum nó antigo
 				if proxima[u].custo < proxima[- 1].custo:#Testa se o ultimo nó adicionado tem custo pior
 					proxima.pop()
@@ -100,6 +99,63 @@ class DDconjuntoDominanteMinimo:
 				self.adicionarUm(u, j, gf)
 				self.proxima = self.eliminarNoIgual(self.proxima)
 			self.anterior = self.proxima #anterior recebe uma copia de proxima
+			self.proxima = [] #Limpa proxima antes de passar para próxima camada
+		return self.anterior
+
+
+	#Junta os nós para que a camada tenha no maximo largura W
+	def unirNos(self, w, proxima):
+		proxima = sorted(proxima, key = attrgetter('custo'), reverse = True)#Ordena a camada de acordo com o custo decrescente
+		aux = proxima[-w].estado
+		proxima[-w].estado = [0 for x in aux]
+		while w < len(proxima):#Percorre a camada até que ela tenha tamanho W 
+			j = 0
+			while j < len(proxima[0].estado):#Percorre o estado
+				if aux[j] == proxima[0].estado[j] == 1:#Testa se a variavel j é 1 nos dois estados
+					proxima[-w].estado[j] = 1 #Atualiza o a variavel j do novo estado para 1 
+				j += 1
+			proxima.pop(0)
+		return proxima
+
+	def apagarNos(self, w, proxima):
+		proxima = sorted(proxima, key = attrgetter('custo'))	#Ordena a camada de acordo com o custo decrescente
+		while w < len(proxima):
+			proxima.pop()
+		return proxima
+
+	#Retorna a solução do diagrama relaxado para o problema do conjunto dominante minimo 
+	def encontrarNoRelaxado(self, w):
+		gf = grafo.Grafo()
+		estado = [1 for x in gf.pesos]
+		solParcial = [1 for x in gf.pesos]
+		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
+		for j in range(len(gf.pesos)):#Percorre as j + 1 camadas
+			for u in self.anterior:#Percorre todos os nós da camada anterior
+				if self.testeInviavel(j, u.estado, gf.grafo) == False:
+					self.adicionarZero(u, j)
+					self.proxima = self.eliminarNoIgual(self.proxima)
+				self.adicionarUm(u, j, gf)
+				self.proxima = self.eliminarNoIgual(self.proxima)
+			if w < len(self.proxima):
+				self.proxima = self.unirNos(w, self.proxima)
+			self.anterior = self.proxima #anterior recebe uma copia de proxima
 			self.proxima = []#Limpa proxima antes de passar para próxima camada
 		return self.anterior
-	
+
+	def encontrarNoRestritoMaxW(self, w):
+		gf = grafo.Grafo()
+		estado = [1 for x in gf.pesos]
+		solParcial = [1 for x in gf.pesos]
+		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
+		for j in range(len(gf.pesos)):#Percorre as j + 1 camadas
+			for u in self.anterior:#Percorre todos os nós da camada anterior
+				if self.testeInviavel(j, u.estado, gf.grafo) == False:
+					self.adicionarZero(u, j)
+					self.proxima = self.eliminarNoIgual(self.proxima)
+				self.adicionarUm(u, j, gf)
+				self.proxima = self.eliminarNoIgual(self.proxima)
+			if len(self.proxima) > w:
+				self.proxima = self.apagarNos(w, self.proxima)
+			self.anterior = self.proxima #anterior recebe uma copia de proxima
+			self.proxima = [] #Limpa proxima antes de passar para próxima camada
+		return self.anterior

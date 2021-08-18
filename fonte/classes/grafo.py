@@ -1,5 +1,4 @@
 import numpy as np
-	
 
 class Grafo:
 	def __init__(self):
