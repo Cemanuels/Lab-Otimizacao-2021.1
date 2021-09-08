@@ -1,14 +1,15 @@
 from classes import no
-from classes import grafo
 from operator import attrgetter
 import copy
 
 
 class DDconjuntoDominanteMinimo:
 	def __init__(self):
+		self.gf = 0
 		self.anterior = [] #Camada anterior do DD
 		self.proxima = [] #Proxima camada do DD
 	
+
 	#Atualiza o estado se um elementode indice J receber 1
 	def atualizarEstado(self, j, estado, grafo):
 		estado[j] = 0
@@ -50,6 +51,7 @@ class DDconjuntoDominanteMinimo:
 	def adicionarZero(self, u, j):
 		novoNo = copy.deepcopy(u)
 		novoNo.solParcial[j] = 0
+		novoNo.camada = j
 		self.proxima.append(novoNo)
 
 
@@ -59,21 +61,25 @@ class DDconjuntoDominanteMinimo:
 		novoNo.solParcial[j] = 1
 		novoNo.estado = self.atualizarEstado(j, novoNo.estado, gf.grafo)
 		novoNo.custo += gf.pesos[j]
+		novoNo.camada = j
 		self.proxima.append(novoNo)
 
 
+	#cria o nó inicial(r) para o diagrama
+	def criarRaiz(self,):
+		raiz = no.No([1 for x in self.gf.pesos], 0, [1 for x in self.gf.pesos], 0)
+		return raiz
+
+
 	#Retorna a solução do diagrama exato para o problema do conjunto dominante minimo 
-	def encontrarNoOtimo(self, instancia):
-		gf = grafo.Grafo(instancia)
-		estado = [1 for x in gf.pesos]
-		solParcial = [1 for x in gf.pesos]
-		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
-		for j in range(len(gf.pesos)):#Percorre as j + 1 camadas
+	def encontrarNoOtimo(self, no):
+		self.anterior = [no] #Cria a primeira camada com o nó r
+		for j in range(len(self.gf.pesos)):#Percorre as j + 1 camadas
 			for u in self.anterior:#Percorre todos os nós da camada anterior
-				if self.testeInviavel(j, u.estado, gf.grafo) == False:
+				if self.testeInviavel(j, u.estado, self.gf.grafo) == False:
 					self.adicionarZero(u, j)
 					self.proxima = self.eliminarNoIgual(self.proxima)
-				self.adicionarUm(u, j, gf)
+				self.adicionarUm(u, j, self.gf)
 				self.proxima = self.eliminarNoIgual(self.proxima)
 			self.anterior = self.proxima #anterior recebe uma copia de proxima
 			self.proxima = []#Limpa proxima antes de passar para próxima camada
@@ -81,21 +87,18 @@ class DDconjuntoDominanteMinimo:
 
 
 	#Retorna a solução do diagrama restrito(aléatorio) para o problema do conjunto dominante minimo 
-	def encontrarNoRestrito(self, w, instancia):
-		gf = grafo.Grafo(instancia)
-		estado = [1 for x in gf.pesos]
-		solParcial = [1 for x in gf.pesos]
-		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
-		for j in range(len(gf.pesos)):#Percorre as j + 1 camadas
+	def encontrarNoRestrito(self, w, no):
+		self.anterior = [no] #Cria a primeira camada com o nó r
+		for j in range(len(self.gf.pesos)):#Percorre as j + 1 camadas
 			for u in self.anterior:#Percorre todos os nós da camada anterior
 				if len(self.proxima) == w:
 					break
-				if self.testeInviavel(j, u.estado, gf.grafo) == False:
+				if self.testeInviavel(j, u.estado, self.gf.grafo) == False:
 					self.adicionarZero(u, j)
 					self.proxima = self.eliminarNoIgual(self.proxima)
 				if len(self.proxima) == w:
 					break
-				self.adicionarUm(u, j, gf)
+				self.adicionarUm(u, j, self.gf)
 				self.proxima = self.eliminarNoIgual(self.proxima)
 			self.anterior = self.proxima #anterior recebe uma copia de proxima
 			self.proxima = [] #Limpa proxima antes de passar para próxima camada
@@ -105,35 +108,33 @@ class DDconjuntoDominanteMinimo:
 	#Junta os nós para que a camada tenha no maximo largura W
 	def unirNos(self, w, proxima):
 		proxima = sorted(proxima, key = attrgetter('custo'), reverse = True)#Ordena a camada de acordo com o custo decrescente
-		aux = proxima[-w].estado
-		proxima[-w].estado = [0 for x in aux]
-		while w < len(proxima):#Percorre a camada até que ela tenha tamanho W 
+		while w < len(proxima):#Percorre a camada até que ela tenha tamanho W
 			j = 0
 			while j < len(proxima[0].estado):#Percorre o estado
-				if aux[j] == proxima[0].estado[j] == 1:#Testa se a variavel j é 1 nos dois estados
-					proxima[-w].estado[j] = 1 #Atualiza o a variavel j do novo estado para 1 
+				if proxima[0].estado[j] == 0:#Testa se a variavel j é 1 nos dois estados
+					proxima[-w].estado[j] = 0 #Atualiza o a variavel j do novo estado para 1
 				j += 1
 			proxima.pop(0)
 		return proxima
 
+
+	#Apaga os nós de acordo com os custos parciais para que a camada tenha no maximo largura W
 	def apagarNos(self, w, proxima):
 		proxima = sorted(proxima, key = attrgetter('custo'))	#Ordena a camada de acordo com o custo decrescente
 		while w < len(proxima):
 			proxima.pop()
 		return proxima
 
+
 	#Retorna a solução do diagrama relaxado para o problema do conjunto dominante minimo 
-	def encontrarNoRelaxado(self, w, instancia):
-		gf = grafo.Grafo(instancia)
-		estado = [1 for x in gf.pesos]
-		solParcial = [1 for x in gf.pesos]
-		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
-		for j in range(len(gf.pesos)):#Percorre as j + 1 camadas
+	def encontrarNoRelaxado(self, w, no, camada):
+		self.anterior = [no] #Cria a primeira camada com o nó r
+		for j in range(camada, len(self.gf.pesos)):#Percorre as j + 1 camadas
 			for u in self.anterior:#Percorre todos os nós da camada anterior
-				if self.testeInviavel(j, u.estado, gf.grafo) == False:
+				if self.testeInviavel(j, u.estado, self.gf.grafo) == False:
 					self.adicionarZero(u, j)
 					self.proxima = self.eliminarNoIgual(self.proxima)
-				self.adicionarUm(u, j, gf)
+				self.adicionarUm(u, j, self.gf)
 				self.proxima = self.eliminarNoIgual(self.proxima)
 			if w < len(self.proxima):
 				self.proxima = self.unirNos(w, self.proxima)
@@ -141,20 +142,42 @@ class DDconjuntoDominanteMinimo:
 			self.proxima = []#Limpa proxima antes de passar para próxima camada
 		return self.anterior
 
-	def encontrarNoRestritoMaxW(self, w, instancia):
-		gf = grafo.Grafo(instancia)
-		estado = [1 for x in gf.pesos]
-		solParcial = [1 for x in gf.pesos]
-		self.anterior = [no.No(estado, 0, solParcial)] #Cria a primeira camada com o nó r
-		for j in range(len(gf.pesos)):#Percorre as j + 1 camadas
+
+	##Retorna a solução do diagrama restrito(baseado em custos) para o problema do conjunto dominante minimo
+	def encontrarNoRestritoMaxW(self, w, no):
+		self.anterior = [no] #Cria a primeira camada com o nó r
+		for j in range(len(self.gf.pesos)):#Percorre as j + 1 camadas
 			for u in self.anterior:#Percorre todos os nós da camada anterior
-				if self.testeInviavel(j, u.estado, gf.grafo) == False:
+				if self.testeInviavel(j, u.estado, self.gf.grafo) == False:
 					self.adicionarZero(u, j)
 					self.proxima = self.eliminarNoIgual(self.proxima)
-				self.adicionarUm(u, j, gf)
+				self.adicionarUm(u, j, self.gf)
 				self.proxima = self.eliminarNoIgual(self.proxima)
 			if len(self.proxima) > w:
 				self.proxima = self.apagarNos(w, self.proxima)
 			self.anterior = self.proxima #anterior recebe uma copia de proxima
 			self.proxima = [] #Limpa proxima antes de passar para próxima camada
+		return self.anterior
+
+
+	#Retorna um vetor a solução e o cut set do diagrama restrito(baseado em custos) para o problema do conjunto dominante minimo
+	def encontrarNoRestritoCutSet(self, w, no, camada):
+		cutset = []
+		teste = True
+		self.anterior = [no] #Cria a primeira camada com o nó r
+		for j in range(camada, len(self.gf.pesos)):#Percorre as j + 1 camadas
+			for u in self.anterior:#Percorre todos os nós da camada anterior
+				if self.testeInviavel(j, u.estado, self.gf.grafo) == False:
+					self.adicionarZero(u, j)
+					self.proxima = self.eliminarNoIgual(self.proxima)
+				self.adicionarUm(u, j, self.gf)
+				self.proxima = self.eliminarNoIgual(self.proxima)
+			if len(self.proxima) > w:
+				if(teste):
+					cutset = self.anterior
+					teste = False
+				self.proxima = self.apagarNos(w, self.proxima)
+			self.anterior = self.proxima #anterior recebe uma copia de proxima
+			self.proxima = [] #Limpa proxima antes de passar para próxima camada
+		self.anterior.extend(cutset)	
 		return self.anterior
